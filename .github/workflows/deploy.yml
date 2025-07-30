@@ -1,34 +1,76 @@
-name: Deploy to Hostinger
+name: Deploy JOTAR to Hostinger
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  web-deploy:
-    name: Deploy to Hostinger
+  deploy:
+    name: 🚀 Deploy to Hostinger via SSH
     runs-on: ubuntu-latest
     
     steps:
-    - name: Get latest code
+    - name: 📂 Get latest code
       uses: actions/checkout@v4
     
-    - name: Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+    - name: 📋 Display files to deploy
+      run: |
+        echo "Files that will be deployed:"
+        find . -type f \
+          ! -path './.git/*' \
+          ! -path './.github/*' \
+          ! -name '*.md' \
+          ! -name '*.txt' \
+          ! -name '*.tar.gz' \
+          ! -name 'deploy.sh' \
+          | head -20
+    
+    - name: 🔐 Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: /public_html/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          .github/
-          README.md
-          DEPLOYMENT_GUIDE.md
-          NOTES.txt
-          **/*.tar.gz
+        ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
+    
+    - name: 🧹 Clean remote directory (backup first)
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          cd domains/${{ secrets.DOMAIN_NAME }}/public_html || cd public_html || cd htdocs || exit 1
+          
+          # Create backup
+          mkdir -p ../backups/backup_$(date +%Y%m%d_%H%M%S)
+          cp -r . ../backups/backup_$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
+          
+          # Clean directory (keep .htaccess if exists)
+          find . -name '.htaccess' -prune -o -type f -exec rm {} + 2>/dev/null || true
+          find . -type d -empty -delete 2>/dev/null || true
+        "
+    
+    - name: 📤 Deploy via rsync over SSH
+      run: |
+        rsync -avz --delete \
+          --exclude='.git/' \
+          --exclude='.github/' \
+          --exclude='*.md' \
+          --exclude='*.txt' \
+          --exclude='*.tar.gz' \
+          --exclude='deploy.sh' \
+          --exclude='.DS_Store' \
+          --exclude='Thumbs.db' \
+          --exclude='*.log' \
+          ./ ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:domains/${{ secrets.DOMAIN_NAME }}/public_html/
+    
+    - name: 🔧 Set correct permissions
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          cd domains/${{ secrets.DOMAIN_NAME }}/public_html || cd public_html || cd htdocs
+          find . -type f -exec chmod 644 {} \;
+          find . -type d -exec chmod 755 {} \;
+          chmod 644 *.html *.css *.js 2>/dev/null || true
+        "
+    
+    - name: ✅ Deployment complete
+      run: |
+        echo "🎉 JOTAR website deployed successfully!"
+        echo "🌐 Main site: https://${{ secrets.DOMAIN_NAME }}"
+        echo "🔐 Admin panel: https://${{ secrets.DOMAIN_NAME }}/admin/"
+        echo "📚 Course page: https://${{ secrets.DOMAIN_NAME }}/landingpages-kursus/"
