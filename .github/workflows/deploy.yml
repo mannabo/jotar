@@ -31,23 +31,27 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
     
-    - name: 🧹 Clean remote directory (backup first)
+    - name: 🧹 Prepare deployment directory
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
-          cd domains/${{ secrets.DOMAIN_NAME }}/public_html || cd public_html || cd htdocs || exit 1
+        ssh -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          # Create public_html if doesn't exist
+          mkdir -p domains/${{ secrets.DOMAIN_NAME }}/public_html
+          cd domains/${{ secrets.DOMAIN_NAME }}/public_html
           
-          # Create backup
-          mkdir -p ../backups/backup_$(date +%Y%m%d_%H%M%S)
-          cp -r . ../backups/backup_$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
-          
-          # Clean directory (keep .htaccess if exists)
-          find . -name '.htaccess' -prune -o -type f -exec rm {} + 2>/dev/null || true
-          find . -type d -empty -delete 2>/dev/null || true
+          # Create backup if files exist
+          if [ \"$(ls -A .)\" ]; then
+            mkdir -p ../../backups/backup_$(date +%Y%m%d_%H%M%S)
+            cp -r . ../../backups/backup_$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
+            
+            # Clean directory (keep .htaccess if exists)
+            find . -name '.htaccess' -prune -o -type f -exec rm {} + 2>/dev/null || true
+            find . -type d -empty -delete 2>/dev/null || true
+          fi
         "
     
     - name: 📤 Deploy via rsync over SSH
       run: |
-        rsync -avz --delete \
+        rsync -avz --delete -e "ssh -p ${{ secrets.HOSTINGER_PORT }}" \
           --exclude='.git/' \
           --exclude='.github/' \
           --exclude='*.md' \
@@ -61,8 +65,8 @@ jobs:
     
     - name: 🔧 Set correct permissions
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
-          cd domains/${{ secrets.DOMAIN_NAME }}/public_html || cd public_html || cd htdocs
+        ssh -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          cd domains/${{ secrets.DOMAIN_NAME }}/public_html
           find . -type f -exec chmod 644 {} \;
           find . -type d -exec chmod 755 {} \;
           chmod 644 *.html *.css *.js 2>/dev/null || true
