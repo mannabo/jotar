@@ -1,0 +1,39 @@
+● Untuk custom domain jotarjohor.my:
+
+1. GitHub Settings:
+- Go to: https://github.com/mannabo/jotar/settings/pages
+- Custom domain: Masukkan jotarjohor.my
+- Save (akan create CNAME file automatic)
+
+2. DNS Settings (Domain Provider):
+Tambah DNS records ni:
+
+Type: A
+Name: @
+Value: 185.199.108.153
+
+Type: A
+Name: @
+Value: 185.199.109.153
+
+Type: A
+Name: @
+Value: 185.199.110.153
+
+Type: A
+Name: @
+Value: 185.199.111.153
+
+Type: CNAME
+Name: www
+Value: mannabo.github.io
+
+3. Wait 24-48 hours untuk DNS propagate
+
+Result:
+- jotarjohor.my → your website
+- www.jotarjohor.my → your website
+- Auto HTTPS enabled
+- Auto deploy tetap sama (git push)
+
+Mana awak beli domain tu? Different provider ada different interface untuk DNS settings.

@@ -1,0 +1,878 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #4c6ef5 0%, #9c27b0 50%, #e91e63 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.floating-element {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.1;
+    animation: float 20s infinite linear;
+    filter: blur(1px);
+    will-change: transform, opacity;
+    transform: translateZ(0);
+}
+
+.floating-element.robot-arm {
+    top: 10%;
+    left: 80%;
+    animation-delay: -2s;
+    animation-duration: 25s;
+}
+
+.floating-element.brain {
+    top: 60%;
+    left: 85%;
+    animation-delay: -8s;
+    animation-duration: 30s;
+    font-size: 1.8rem;
+}
+
+.floating-element.circuit {
+    top: 30%;
+    left: 90%;
+    animation-delay: -15s;
+    animation-duration: 22s;
+    font-size: 1.5rem;
+}
+
+.floating-element.gear {
+    top: 80%;
+    left: 75%;
+    animation-delay: -5s;
+    animation-duration: 28s;
+    animation-name: rotate;
+}
+
+.floating-element.chip {
+    top: 20%;
+    left: 70%;
+    animation-delay: -12s;
+    animation-duration: 35s;
+}
+
+.floating-element.robot {
+    top: 45%;
+    left: 95%;
+    animation-delay: -18s;
+    animation-duration: 26s;
+    font-size: 2.5rem;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: particle-float 15s infinite linear;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+}
+
+.particle:nth-child(7) {
+    top: 15%;
+    left: 85%;
+    animation-delay: -3s;
+}
+
+.particle:nth-child(8) {
+    top: 35%;
+    left: 92%;
+    animation-delay: -7s;
+}
+
+.particle:nth-child(9) {
+    top: 55%;
+    left: 88%;
+    animation-delay: -11s;
+}
+
+.particle:nth-child(10) {
+    top: 75%;
+    left: 82%;
+    animation-delay: -14s;
+}
+
+.particle:nth-child(11) {
+    top: 25%;
+    left: 78%;
+    animation-delay: -6s;
+}
+
+.particle:nth-child(12) {
+    top: 65%;
+    left: 95%;
+    animation-delay: -9s;
+}
+
+.geometric-shape {
+    position: absolute;
+    opacity: 0.05;
+    animation: geometric-float 40s infinite linear;
+}
+
+.geometric-shape.circle {
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    top: 20%;
+    left: 85%;
+    animation-delay: -10s;
+}
+
+.geometric-shape.triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 45px solid rgba(255, 255, 255, 0.1);
+    top: 50%;
+    left: 90%;
+    animation-delay: -20s;
+}
+
+.geometric-shape.square {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    top: 70%;
+    left: 80%;
+    animation-delay: -30s;
+    animation-name: square-rotate;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.1;
+    }
+    90% {
+        opacity: 0.1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(-50px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes particle-float {
+    0% {
+        transform: translateY(100vh) translateX(0px);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-50px) translateX(-30px);
+        opacity: 0;
+    }
+}
+
+@keyframes geometric-float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-100px) rotate(720deg);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.1;
+    }
+    90% {
+        opacity: 0.1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(1080deg);
+        opacity: 0;
+    }
+}
+
+@keyframes square-rotate {
+    0% {
+        transform: translateY(100vh) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg) scale(1.2);
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg) scale(1);
+    }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-image {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+    background: transparent;
+}
+
+
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 60px;
+}
+
+.hero {
+    flex: 1;
+}
+
+.hero-content {
+    color: white;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.value-props {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.value-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 16px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.value-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.value-icon {
+    font-size: 1.2rem;
+}
+
+.value-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+}
+
+.seminar-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    min-width: 100px;
+}
+
+.detail-value {
+    opacity: 0.9;
+}
+
+.registration {
+    flex: 0 0 450px;
+}
+
+.registration-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.registration-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.registration-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    min-height: 44px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input:invalid {
+    border-color: #e74c3c;
+}
+
+.course-content {
+    margin: 40px 0;
+}
+
+.course-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.course-topics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.topic-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pricing-section {
+    margin: 40px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.price-badge {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    padding: 25px 35px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 15px 35px rgba(238, 90, 36, 0.3);
+    transform: rotate(-2deg);
+}
+
+.price-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.price-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.price-bonus {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+.partnership {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.partnership-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.partner-logos {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.partner-logo {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #4c6ef5 0%, #9c27b0 50%, #e91e63 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(76, 110, 245, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.success-message {
+    text-align: center;
+    padding: 30px;
+    background: #d4edda;
+    border: 2px solid #c3e6cb;
+    border-radius: 10px;
+    color: #155724;
+}
+
+.success-message h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-element,
+    .particle,
+    .geometric-shape {
+        animation: none;
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .floating-element {
+        display: none;
+    }
+    
+    .particle {
+        width: 2px;
+        height: 2px;
+    }
+    
+    .geometric-shape {
+        display: none;
+    }
+    
+    .main-content {
+        flex-direction: column;
+        gap: 30px;
+        padding: 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .hero-badge {
+        font-size: 0.7rem;
+        padding: 6px 15px;
+        margin-bottom: 15px;
+    }
+    
+    .value-props {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .value-item {
+        padding: 10px 12px;
+    }
+    
+    .value-text {
+        font-size: 0.8rem;
+    }
+    
+    .course-title {
+        font-size: 1.6rem;
+    }
+    
+    .topic-item {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+    
+    .price-badge {
+        padding: 20px 25px;
+        transform: rotate(-1deg);
+    }
+    
+    .price-amount {
+        font-size: 2rem;
+    }
+    
+    .partner-logos {
+        gap: 15px;
+    }
+    
+    .registration {
+        flex: none;
+        width: 100%;
+    }
+    
+    .registration-content {
+        padding: 30px 20px;
+    }
+    
+    .logo {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .logo-text h1 {
+        font-size: 1.5rem;
+    }
+    
+    .logo-subtitle {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    .hero-badge {
+        font-size: 0.65rem;
+        padding: 5px 12px;
+    }
+    
+    .value-props {
+        margin-bottom: 25px;
+    }
+    
+    .value-item {
+        padding: 8px 10px;
+    }
+    
+    .value-icon {
+        font-size: 1rem;
+    }
+    
+    .value-text {
+        font-size: 0.75rem;
+    }
+    
+    .course-title {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+    
+    .topic-item {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+        text-align: center;
+    }
+    
+    .price-badge {
+        padding: 15px 20px;
+        margin: 0 auto;
+        max-width: 250px;
+    }
+    
+    .price-amount {
+        font-size: 1.8rem;
+    }
+    
+    .price-bonus {
+        font-size: 0.9rem;
+    }
+    
+    .registration-content {
+        padding: 25px 15px;
+        margin: 0 10px;
+    }
+    
+    .registration-title {
+        font-size: 1.6rem;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .logo-image {
+        height: 90px;
+    }
+    
+    .partner-logos {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .partner-logo {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+    
+    .partnership-text {
+        font-size: 0.8rem;
+    }
+    
+    .main-content {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .course-content {
+        margin: 30px 0;
+    }
+    
+    .pricing-section {
+        margin: 30px 0;
+    }
+    
+    .form-group input {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .submit-btn {
+        padding: 15px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .course-title {
+        font-size: 1.2rem;
+    }
+    
+    .topic-item {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+    }
+    
+    .price-badge {
+        padding: 12px 15px;
+        max-width: 220px;
+    }
+    
+    .price-amount {
+        font-size: 1.5rem;
+    }
+    
+    .registration-content {
+        margin: 0 5px;
+        padding: 20px 12px;
+    }
+    
+    .logo-image {
+        height: 75px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .main-content {
+        padding: 30px;
+        gap: 40px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .registration {
+        flex: 0 0 400px;
+    }
+}
