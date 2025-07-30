@@ -1,4 +1,4 @@
-name: Deploy JOTAR to Hostinger
+name: Deploy JOTAR to jotarjohor.com
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: 🚀 Deploy to Hostinger via SSH
+    name: 🚀 Deploy to jotarjohor.com via SSH
     runs-on: ubuntu-latest
     
     steps:
