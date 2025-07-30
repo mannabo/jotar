@@ -33,15 +33,15 @@ jobs:
     
     - name: 🧹 Prepare deployment directory
       run: |
-        ssh -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+        ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
           # Create public_html if doesn't exist
-          mkdir -p domains/${{ secrets.DOMAIN_NAME }}/public_html
-          cd domains/${{ secrets.DOMAIN_NAME }}/public_html
+          mkdir -p public_html
+          cd public_html
           
           # Create backup if files exist
-          if [ \"$(ls -A .)\" ]; then
-            mkdir -p ../../backups/backup_$(date +%Y%m%d_%H%M%S)
-            cp -r . ../../backups/backup_$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
+          if [ \"\$(ls -A . 2>/dev/null)\" ]; then
+            mkdir -p ../backups/backup_\$(date +%Y%m%d_%H%M%S)
+            cp -r . ../backups/backup_\$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
             
             # Clean directory (keep .htaccess if exists)
             find . -name '.htaccess' -prune -o -type f -exec rm {} + 2>/dev/null || true
@@ -51,7 +51,7 @@ jobs:
     
     - name: 📤 Deploy via rsync over SSH
       run: |
-        rsync -avz --delete -e "ssh -p ${{ secrets.HOSTINGER_PORT }}" \
+        rsync -avz --delete -e "ssh -p 65002" \
           --exclude='.git/' \
           --exclude='.github/' \
           --exclude='*.md' \
@@ -61,12 +61,13 @@ jobs:
           --exclude='.DS_Store' \
           --exclude='Thumbs.db' \
           --exclude='*.log' \
-          ./ ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:domains/${{ secrets.DOMAIN_NAME }}/public_html/
+          --exclude='*_key*' \
+          ./ u359923617@151.106.117.45:public_html/
     
     - name: 🔧 Set correct permissions
       run: |
-        ssh -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
-          cd domains/${{ secrets.DOMAIN_NAME }}/public_html
+        ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
+          cd public_html
           find . -type f -exec chmod 644 {} \;
           find . -type d -exec chmod 755 {} \;
           chmod 644 *.html *.css *.js 2>/dev/null || true
@@ -75,6 +76,6 @@ jobs:
     - name: ✅ Deployment complete
       run: |
         echo "🎉 JOTAR website deployed successfully!"
-        echo "🌐 Main site: https://${{ secrets.DOMAIN_NAME }}"
-        echo "🔐 Admin panel: https://${{ secrets.DOMAIN_NAME }}/admin/"
-        echo "📚 Course page: https://${{ secrets.DOMAIN_NAME }}/landingpages-kursus/"
+        echo "🌐 Main site: https://jotarjohor.com"
+        echo "🔐 Admin panel: https://jotarjohor.com/admin/"
+        echo "📚 Course page: https://jotarjohor.com/landingpages-kursus/"
