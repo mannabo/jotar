@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOTAR Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo" id="logoToggle">
+                    <img src="../jotar-logo.png" alt="JOTAR Logo">
+                    <span class="logo-text">JOTAR Admin</span>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-section="dashboard">
+                    <a href="#dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-section="organisasi">
+                    <a href="#organisasi">
+                        <i class="fas fa-building"></i>
+                        <span class="menu-text">Organisasi</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-section="aktiviti">
+                    <a href="#aktiviti">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="menu-text">Aktiviti</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-section="message">
+                    <a href="#message">
+                        <i class="fas fa-envelope"></i>
+                        <span class="menu-text">Message</span>
+                        <span class="notification-badge">5</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-section="setting">
+                    <a href="#setting">
+                        <i class="fas fa-cog"></i>
+                        <span class="menu-text">Setting</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <button class="sidebar-expand-btn" id="sidebarExpandBtn" title="Expand Sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="header-actions">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count">3</span>
+                        </button>
+                        <div class="user-profile">
+                            <img src="../images/about-team.jpg" alt="User" class="profile-img">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <section class="content-section active" id="dashboard-section">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>500+</h3>
+                            <p>Farmers Trained</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>50+</h3>
+                            <p>Communities</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>25+</h3>
+                            <p>Programs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>124</h3>
+                            <p>Messages</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-widgets">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Recent Activities</h3>
+                            <button class="widget-action">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p>New farmer registered: Ahmad Bin Ali</p>
+                                    <span class="activity-time">2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p>Training session completed: Modern Farming</p>
+                                    <span class="activity-time">4 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p>New message received from community</p>
+                                    <span class="activity-time">6 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Upcoming Events</h3>
+                            <button class="widget-action">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div class="event-item">
+                                <div class="event-date">
+                                    <span class="date">15</span>
+                                    <span class="month">Feb</span>
+                                </div>
+                                <div class="event-info">
+                                    <h4>IoT Workshop</h4>
+                                    <p>Smart farming technology training</p>
+                                    <span class="event-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Tangkak Community Center
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="event-item">
+                                <div class="event-date">
+                                    <span class="date">20</span>
+                                    <span class="month">Feb</span>
+                                </div>
+                                <div class="event-info">
+                                    <h4>Digital Marketing Seminar</h4>
+                                    <p>Online marketing for agropreneurs</p>
+                                    <span class="event-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Virtual Event
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Organisasi Content -->
+            <section class="content-section" id="organisasi-section">
+                <div class="section-header">
+                    <h2>Organisasi Management</h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Add Member
+                    </button>
+                </div>
+                <div class="org-content">
+                    <div class="org-info-card">
+                        <h3>JOHOR TANGKAK AGROPRENEUR ROOTS ORGANIZATION</h3>
+                        <p><strong>Registration:</strong> PPM014-01-02012022</p>
+                        <p><strong>Address:</strong> No. 23, Jalan Gambir 1, Bandar Baru Bukit Gambir, 84800 Tangkak, Johor</p>
+                        <p><strong>Contact:</strong> +6019-701 0010</p>
+                        <p><strong>Email:</strong> jotar.johor@gmail.com</p>
+                    </div>
+                    <div class="members-list">
+                        <h4>Team Members</h4>
+                        <div class="member-item">
+                            <div class="member-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="member-info">
+                                <h5>Ahmad Rahman</h5>
+                                <p>President</p>
+                            </div>
+                            <div class="member-actions">
+                                <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Aktiviti Content -->
+            <section class="content-section" id="aktiviti-section">
+                <div class="section-header">
+                    <h2>Activities & Events</h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Add Activity
+                    </button>
+                </div>
+                <div class="activities-grid">
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h4>Modern Farming Training</h4>
+                            <span class="activity-status active">Active</span>
+                        </div>
+                        <p>IoT and AI technology workshop for farmers</p>
+                        <div class="activity-meta">
+                            <span><i class="fas fa-calendar"></i> Feb 15, 2025</span>
+                            <span><i class="fas fa-users"></i> 25 participants</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Message Content -->
+            <section class="content-section" id="message-section">
+                <div class="section-header">
+                    <h2>Messages</h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Compose
+                    </button>
+                </div>
+                <div class="messages-container">
+                    <div class="message-item unread">
+                        <div class="message-sender">
+                            <div class="sender-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="sender-info">
+                                <h5>Siti Aminah</h5>
+                                <p>Training inquiry</p>
+                            </div>
+                        </div>
+                        <div class="message-time">2 hours ago</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Setting Content -->
+            <section class="content-section" id="setting-section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="profile">Profile</button>
+                        <button class="tab-btn" data-tab="users">Admin Users</button>
+                        <button class="tab-btn" data-tab="general">General</button>
+                        <button class="tab-btn" data-tab="security">Security</button>
+                    </div>
+                    <div class="tab-content">
+                        <!-- Profile Tab -->
+                        <div class="tab-pane active" id="profile-tab">
+                            <div class="setting-group">
+                                <h4>Admin Profile</h4>
+                                <form id="profileForm">
+                                    <div class="profile-section">
+                                        <div class="profile-avatar">
+                                            <div class="avatar-container">
+                                                <div class="avatar-preview" id="avatarPreview">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="avatar-upload">
+                                                    <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
+                                                    <button type="button" class="upload-btn" id="uploadPhotoBtn">
+                                                        <i class="fas fa-camera"></i>
+                                                    </button>
+                                                    <button type="button" class="remove-btn" id="removePhotoBtn" style="display: none;">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="avatar-info">
+                                                <h5 id="currentUserDisplayName">Loading...</h5>
+                                                <p id="currentUserEmail">Loading...</p>
+                                                <div class="profile-badges" id="profileBadges">
+                                                    <!-- Badges will be added here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" id="firstName" placeholder="Enter first name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" id="lastName" placeholder="Enter last name">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Display Name</label>
+                                            <input type="text" id="displayName" placeholder="Auto-generated from first + last name" readonly>
+                                            <small>This will be auto-updated when you change first/last name</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input type="tel" id="phone" placeholder="Enter phone number">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Department</label>
+                                        <select id="department">
+                                            <option value="management">Management</option>
+                                            <option value="programs">Programs</option>
+                                            <option value="community">Community Relations</option>
+                                            <option value="finance">Finance</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Bio</label>
+                                        <textarea id="bio" rows="3" placeholder="Brief description about yourself"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            Update Profile
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Admin Users Tab -->
+                        <div class="tab-pane" id="users-tab">
+                            <div class="setting-group">
+                                <div class="section-header">
+                                    <h4>Registered Admin Users</h4>
+                                    <div class="header-actions">
+                                        <button class="btn btn-secondary" id="refreshUsersBtn">
+                                            <i class="fas fa-sync-alt"></i>
+                                            Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="users-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number" id="totalAdmins">0</span>
+                                        <span class="stat-label">Total Admins</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number" id="activeAdmins">0</span>
+                                        <span class="stat-label">Active</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number" id="inactiveAdmins">0</span>
+                                        <span class="stat-label">Inactive</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="users-table">
+                                    <div class="table-header">
+                                        <div class="table-row">
+                                            <div class="table-cell">User</div>
+                                            <div class="table-cell">Email</div>
+                                            <div class="table-cell">Status</div>
+                                            <div class="table-cell">Last Login</div>
+                                            <div class="table-cell">Actions</div>
+                                        </div>
+                                    </div>
+                                    <div class="table-body" id="usersTableBody">
+                                        <div class="loading-users">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            Loading users...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- General Tab -->
+                        <div class="tab-pane" id="general-tab">
+                            <div class="setting-group">
+                                <h4>Organization Settings</h4>
+                                <form id="organizationForm">
+                                    <div class="form-group">
+                                        <label>Organization Name</label>
+                                        <input type="text" id="orgName" value="JOHOR TANGKAK AGROPRENEUR ROOTS ORGANIZATION">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Email</label>
+                                        <input type="email" id="orgEmail" value="jotar.johor@gmail.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Maximum Admin Users</label>
+                                        <input type="number" id="maxAdmins" value="10" min="1" max="50">
+                                        <small>Maximum number of admin users allowed</small>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            Save Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Security Tab -->  
+                        <div class="tab-pane" id="security-tab">
+                            <div class="setting-group">
+                                <h4>Password Management</h4>
+                                <form id="passwordChangeForm">
+                                    <div class="form-group">
+                                        <label>Current Password</label>
+                                        <div class="password-input-container">
+                                            <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                                            <button type="button" class="password-toggle" id="toggleCurrentPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <div class="password-input-container">
+                                            <input type="password" id="newPassword" placeholder="Enter new password" required>
+                                            <button type="button" class="password-toggle" id="toggleNewPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small>Password must be at least 6 characters long</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <div class="password-input-container">
+                                            <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-key"></i>
+                                            Change Password
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="setting-group">
+                                <h4>Access Control</h4>
+                                <div class="security-controls">
+                                    <div class="control-item">
+                                        <div class="control-info">
+                                            <h5>Allow New Admin Registration</h5>
+                                            <p>When disabled, new users cannot register as admin</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="allowRegistration" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="control-item">
+                                        <div class="control-info">
+                                            <h5>Require Email Verification</h5>
+                                            <p>New admin users must verify their email</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="requireEmailVerification">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveSecurityBtn">
+                                        <i class="fas fa-shield-alt"></i>
+                                        Update Security Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="admin-script.js"></script>
+</body>
+</html>

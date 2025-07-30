@@ -1000,6 +1000,38 @@ body {
     color: #2E8B57;
 }
 
+.admin-link {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #555;
+}
+
+.admin-access {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #2E8B57;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border: 2px solid #2E8B57;
+    border-radius: 6px;
+    background: rgba(46, 139, 87, 0.1);
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.admin-access:hover {
+    background: #2E8B57;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+}
+
+.admin-access i {
+    font-size: 16px;
+}
+
 .footer-bottom {
     text-align: center;
     padding-top: 20px;
