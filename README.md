@@ -88,3 +88,4 @@ git commit -m "Your changes"
 git push origin main
 ```
 Website will auto-update on Hostinger! 🚀
+# Test deployment to jotarjohor.com
