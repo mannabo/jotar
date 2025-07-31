@@ -26,7 +26,8 @@ class FirebaseMessagesHandler {
         if (this.isFirebaseReady && this.db) {
             return await this.saveToFirebase(messageData);
         } else {
-            return this.saveToLocalStorage(messageData);
+            console.error('Firebase not ready');
+            return { success: false, error: 'Firebase not ready' };
         }
     }
     
@@ -50,8 +51,7 @@ class FirebaseMessagesHandler {
             };
         } catch (error) {
             console.error('Error saving to Firebase:', error);
-            // Fallback to localStorage
-            return this.saveToLocalStorage(messageData);
+            return { success: false, error: error.message };
         }
     }
     
@@ -87,7 +87,8 @@ class FirebaseMessagesHandler {
         if (this.isFirebaseReady && this.db) {
             return await this.getFromFirebase();
         } else {
-            return this.getFromLocalStorage();
+            console.error('Firebase not ready');
+            return [];
         }
     }
     
@@ -115,8 +116,7 @@ class FirebaseMessagesHandler {
             return messages;
         } catch (error) {
             console.error('Error loading from Firebase:', error);
-            // Fallback to localStorage
-            return this.getFromLocalStorage();
+            return [];
         }
     }
     
@@ -135,7 +135,8 @@ class FirebaseMessagesHandler {
         if (this.isFirebaseReady && this.db) {
             return await this.updateInFirebase(messageId, status);
         } else {
-            return this.updateInLocalStorage(messageId, status);
+            console.error('Firebase not ready');
+            return { success: false, error: 'Firebase not ready' };
         }
     }
     
@@ -184,7 +185,8 @@ class FirebaseMessagesHandler {
         if (this.isFirebaseReady && this.db) {
             return await this.deleteFromFirebase(messageId);
         } else {
-            return this.deleteFromLocalStorage(messageId);
+            console.error('Firebase not ready');
+            return { success: false, error: 'Firebase not ready' };
         }
     }
     

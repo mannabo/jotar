@@ -68,8 +68,8 @@ class AdminMessagesHandler {
             if (window.firebaseMessages) {
                 return await window.firebaseMessages.getMessages();
             } else {
-                // Fallback to localStorage
-                return JSON.parse(localStorage.getItem('contactMessages') || '[]');
+                console.error('Firebase messages handler not available');
+                return [];
             }
         } catch (error) {
             console.error('Error loading messages:', error);
@@ -179,30 +179,38 @@ class AdminMessagesHandler {
     async markAsRead(messageId) {
         try {
             if (window.firebaseMessages) {
-                await window.firebaseMessages.updateMessageStatus(messageId, 'read');
-            } else {
-                // Fallback to localStorage
-                const messages = await this.getMessages();
-                const messageIndex = messages.findIndex(msg => msg.id === messageId);
-                
-                if (messageIndex !== -1) {
-                    messages[messageIndex].status = 'read';
-                    localStorage.setItem('contactMessages', JSON.stringify(messages));
+                const result = await window.firebaseMessages.updateMessageStatus(messageId, 'read');
+                if (result.success) {
+                    this.loadMessages();
+                } else {
+                    console.error('Failed to mark message as read:', result.error);
                 }
+            } else {
+                console.error('Firebase messages handler not available');
             }
-            this.loadMessages();
         } catch (error) {
             console.error('Error marking message as read:', error);
         }
     }
     
-    markAllRead() {
+    async markAllRead() {
         if (!confirm('Mark all messages as read?')) return;
         
-        const messages = this.getMessages();
-        const updatedMessages = messages.map(msg => ({ ...msg, status: 'read' }));
-        localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
-        this.loadMessages();
+        try {
+            const messages = await this.getMessages();
+            const unreadMessages = messages.filter(msg => msg.status === 'unread');
+            
+            if (window.firebaseMessages) {
+                for (const message of unreadMessages) {
+                    await window.firebaseMessages.updateMessageStatus(message.firebaseId || message.id, 'read');
+                }
+                this.loadMessages();
+            } else {
+                console.error('Firebase messages handler not available');
+            }
+        } catch (error) {
+            console.error('Error marking all messages as read:', error);
+        }
     }
     
     async deleteMessage(messageId) {
@@ -210,36 +218,48 @@ class AdminMessagesHandler {
         
         try {
             if (window.firebaseMessages) {
-                await window.firebaseMessages.deleteMessage(messageId);
+                const result = await window.firebaseMessages.deleteMessage(messageId);
+                if (result.success) {
+                    this.loadMessages();
+                } else {
+                    console.error('Failed to delete message:', result.error);
+                }
             } else {
-                // Fallback to localStorage
-                const messages = await this.getMessages();
-                const filteredMessages = messages.filter(msg => msg.id !== messageId);
-                localStorage.setItem('contactMessages', JSON.stringify(filteredMessages));
+                console.error('Firebase messages handler not available');
             }
-            this.loadMessages();
         } catch (error) {
             console.error('Error deleting message:', error);
         }
     }
     
-    clearAllMessages() {
+    async clearAllMessages() {
         if (!confirm('Delete all messages permanently? This action cannot be undone.')) return;
         
-        localStorage.removeItem('contactMessages');
-        localStorage.removeItem('unreadMessageCount');
-        this.loadMessages();
+        try {
+            const messages = await this.getMessages();
+            
+            if (window.firebaseMessages) {
+                for (const message of messages) {
+                    await window.firebaseMessages.deleteMessage(message.firebaseId || message.id);
+                }
+                this.loadMessages();
+            } else {
+                console.error('Firebase messages handler not available');
+            }
+        } catch (error) {
+            console.error('Error clearing all messages:', error);
+        }
     }
     
-    viewMessage(messageId) {
-        const messages = this.getMessages();
-        const message = messages.find(msg => msg.id === messageId);
+    async viewMessage(messageId) {
+        const messages = await this.getMessages();
+        const message = messages.find(msg => (msg.firebaseId || msg.id) === messageId);
         
         if (!message) return;
         
         // Mark as read when viewing
         if (message.status === 'unread') {
-            this.markAsRead(messageId);
+            this.markAsRead(message.firebaseId || message.id);
         }
         
         // Create modal for viewing full message

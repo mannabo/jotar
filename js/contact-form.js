@@ -126,37 +126,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const result = await window.firebaseMessages.saveMessage(messageData);
                 return result;
             } else {
-                // Fallback to localStorage if Firebase not available
-                console.log('Firebase not available, using localStorage fallback');
-                return saveToLocalStorageFallback(messageData);
+                console.error('Firebase not available');
+                return { success: false, error: 'Firebase not available' };
             }
         } catch (error) {
             console.error('Error saving message:', error);
-            return saveToLocalStorageFallback(messageData);
-        }
-    }
-    
-    function saveToLocalStorageFallback(messageData) {
-        try {
-            let messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-            messages.unshift(messageData);
-            
-            if (messages.length > 100) {
-                messages = messages.slice(0, 100);
-            }
-            
-            localStorage.setItem('contactMessages', JSON.stringify(messages));
-            
-            const unreadCount = messages.filter(msg => msg.status === 'unread').length;
-            localStorage.setItem('unreadMessageCount', unreadCount.toString());
-            
-            console.log('Message saved to localStorage fallback');
-            return { success: true };
-        } catch (error) {
-            console.error('Error saving to localStorage fallback:', error);
             return { success: false, error: error.message };
         }
     }
+    
     
     
     function showMessage(message, type) {

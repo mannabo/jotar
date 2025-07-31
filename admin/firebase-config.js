@@ -88,7 +88,7 @@ export const getActivities = async () => {
 
 export const addMessage = async (messageData) => {
     try {
-        const docRef = await addDoc(collection(db, "messages"), {
+        const docRef = await addDoc(collection(db, "contactMessages"), {
             ...messageData,
             timestamp: new Date(),
             status: 'unread'
@@ -101,7 +101,7 @@ export const addMessage = async (messageData) => {
 
 export const getMessages = async () => {
     try {
-        const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+        const q = query(collection(db, "contactMessages"), orderBy("timestamp", "desc"));
         const querySnapshot = await getDocs(q);
         const messages = [];
         querySnapshot.forEach((doc) => {
