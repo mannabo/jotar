@@ -5,11 +5,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const formMessage = document.getElementById('formMessage');
     
     if (!form) {
-        console.log('Contact form not found');
+        console.error('Contact form with ID "contactForm" not found');
         return;
     }
     
-    console.log('Contact form loaded successfully');
+    // Double check all required elements exist
+    const requiredElements = [
+        'contactName',
+        'contactEmail', 
+        'contactSubject',
+        'contactMessage',
+        'submitBtn',
+        'formMessage'
+    ];
+    
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.error('Missing required form elements:', missingElements);
+        return;
+    }
+    
+    console.log('Contact form loaded successfully with all required elements');
     
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -19,11 +36,29 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleFormSubmit() {
         console.log('Form submit triggered');
         
+        // Get form elements first
+        const nameEl = document.getElementById('contactName');
+        const emailEl = document.getElementById('contactEmail');
+        const subjectEl = document.getElementById('contactSubject');
+        const messageEl = document.getElementById('contactMessage');
+        
+        // Check if elements exist
+        if (!nameEl || !emailEl || !subjectEl || !messageEl) {
+            console.error('Form elements not found:', {
+                nameEl: !!nameEl,
+                emailEl: !!emailEl, 
+                subjectEl: !!subjectEl,
+                messageEl: !!messageEl
+            });
+            showMessage('Form error: Elements not found. Please refresh page.', 'error');
+            return;
+        }
+        
         // Get form values
-        const name = document.getElementById('contactName').value;
-        const email = document.getElementById('contactEmail').value;
-        const subject = document.getElementById('contactSubject').value;
-        const message = document.getElementById('contactMessage').value;
+        const name = nameEl.value;
+        const email = emailEl.value;
+        const subject = subjectEl.value;
+        const message = messageEl.value;
         
         console.log('Form values:', { name, email, subject, message });
         
