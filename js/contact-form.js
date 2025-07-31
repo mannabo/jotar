@@ -27,29 +27,29 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Form values:', { name, email, subject, message });
         
-        // Validate
+        // Validate form fields
         if (!name || name.trim() === '') {
-            showMessage('Please enter your name.', 'error');
+            showMessage('Sila masukkan nama anda.', 'error');
             return;
         }
         
         if (!email || email.trim() === '') {
-            showMessage('Please enter your email.', 'error');
+            showMessage('Sila masukkan email anda.', 'error');
             return;
         }
         
         if (!isValidEmail(email.trim())) {
-            showMessage('Please enter a valid email address.', 'error');
+            showMessage('Sila masukkan email yang sah.', 'error');
             return;
         }
         
         if (!subject || subject.trim() === '') {
-            showMessage('Please enter a subject.', 'error');
+            showMessage('Sila masukkan subjek.', 'error');
             return;
         }
         
         if (!message || message.trim() === '') {
-            showMessage('Please enter your message.', 'error');
+            showMessage('Sila masukkan mesej anda.', 'error');
             return;
         }
         
@@ -72,13 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (result.success) {
                 // Show success
-                showMessage('Thank you! Your message has been sent successfully.', 'success');
+                showMessage('Terima kasih! Mesej anda telah berjaya dihantar.', 'success');
                 
                 // Reset form
                 form.reset();
             } else {
                 // Show error
-                showMessage('Sorry, there was an error sending your message. Please try again.', 'error');
+                showMessage('Maaf, terdapat masalah menghantar mesej. Sila cuba lagi.', 'error');
             }
             
             setLoadingState(false);
