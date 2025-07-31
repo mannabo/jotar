@@ -10,8 +10,23 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
-    // Messages collection - Only authenticated users can read/write
+    // Contact Messages collection - Only authenticated users can read/write
+    match /contactMessages/{messageId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Messages collection (legacy) - Only authenticated users can read/write
     match /messages/{messageId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Admin Users collection - Only authenticated users can read/write their own data
+    match /admin_users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // System Settings collection - Only authenticated users can read/write
+    match /system_settings/{document} {
       allow read, write: if request.auth != null;
     }
     
@@ -25,7 +40,8 @@ service cloud.firestore {
       allow read, write: if request.auth != null && 
         request.auth.token.email in [
           'admin@jotar.org',
-          'jotar.johor@gmail.com'
+          'jotar.johor@gmail.com',
+          'azmanomarsahad@gmail.com'
         ];
     }
     

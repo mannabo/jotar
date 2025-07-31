@@ -11,20 +11,22 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app, db;
+let app, db, auth;
 
 async function initializeFirebase() {
     try {
         // Import Firebase modules
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
         const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+        const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
         
         // Initialize Firebase
         app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        auth = getAuth(app);
         
-        console.log('Firebase initialized successfully');
-        return { app, db };
+        console.log('Firebase initialized successfully with auth');
+        return { app, db, auth };
     } catch (error) {
         console.error('Error initializing Firebase:', error);
         // Fallback to localStorage if Firebase fails

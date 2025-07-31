@@ -16,22 +16,43 @@ import {
 } from './firebase-config.js';
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Wait for authentication state to be determined
+    let authStateResolved = false;
+    
     // Check authentication state
-    checkAuthState((user) => {
+    checkAuthState(async (user) => {
+        if (authStateResolved) return; // Prevent multiple executions
+        authStateResolved = true;
+        
         if (!user) {
             // User is not logged in, redirect to login
             window.location.href = './login.html';
             return;
         }
         
-        // User is logged in, initialize and update UI
-        initializeUserProfile(user);
-        updateUserProfile(user);
-        loadDashboardData();
-        loadSettingsData();
+        console.log('User authenticated:', user.email);
+        
+        // User is logged in, initialize profile first
+        try {
+            await initializeUserProfile(user);
+            console.log('User profile initialized');
+            
+            // Then update UI and load data
+            updateUserProfile(user);
+            
+            // Wait a bit for auth token to propagate
+            setTimeout(() => {
+                loadDashboardData();
+                loadSettingsData();
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Error initializing user profile:', error);
+        }
     });
     // Get DOM elements
     const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
     const logoToggle = document.getElementById('logoToggle');
     const sidebarExpandBtn = document.getElementById('sidebarExpandBtn');
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -50,6 +71,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     function toggleMobileMenu() {
         sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+    }
+    
+    // Close mobile menu when overlay is clicked
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('active');
+        });
     }
 
     // Load sidebar state from localStorage
@@ -183,24 +213,65 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle logout
-    async function handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
-            try {
-                const result = await logoutUser();
-                if (result.success) {
-                    // Clear any local storage
-                    localStorage.removeItem('rememberMe');
-                    localStorage.removeItem('userEmail');
-                    
-                    // Redirect to login page
-                    window.location.href = './login.html';
-                } else {
-                    alert('Logout failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('An error occurred during logout.');
+    function handleLogout() {
+        showLogoutModal();
+    }
+    
+    // Show logout confirmation modal
+    function showLogoutModal() {
+        const modal = document.getElementById('logoutModalOverlay');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+    }
+    
+    // Hide logout modal
+    function hideLogoutModal() {
+        const modal = document.getElementById('logoutModalOverlay');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+    }
+    
+    // Perform actual logout
+    async function performLogout() {
+        const confirmBtn = document.getElementById('confirmLogoutBtn');
+        const btnText = confirmBtn.querySelector('.btn-text');
+        const btnLoader = confirmBtn.querySelector('.btn-loader');
+        
+        try {
+            // Show loading state
+            confirmBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'flex';
+            
+            const result = await logoutUser();
+            if (result.success) {
+                // Clear any local storage
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('currentSection');
+                localStorage.removeItem('currentTab');
+                localStorage.removeItem('sidebarCollapsed');
+                
+                // Hide modal and redirect
+                hideLogoutModal();
+                window.location.href = './login.html';
+            } else {
+                throw new Error('Logout failed');
             }
+        } catch (error) {
+            console.error('Logout error:', error);
+            
+            // Reset button state
+            confirmBtn.disabled = false;
+            btnText.style.display = 'inline';
+            btnLoader.style.display = 'none';
+            
+            // Show error (you could create another modal for this)
+            alert('An error occurred during logout. Please try again.');
         }
     }
 
@@ -512,6 +583,38 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
+
+    // Logout modal handlers
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    const logoutModalOverlay = document.getElementById('logoutModalOverlay');
+    
+    if (cancelLogoutBtn) {
+        cancelLogoutBtn.addEventListener('click', hideLogoutModal);
+    }
+    
+    if (confirmLogoutBtn) {
+        confirmLogoutBtn.addEventListener('click', performLogout);
+    }
+    
+    // Close modal when clicking overlay background
+    if (logoutModalOverlay) {
+        logoutModalOverlay.addEventListener('click', function(e) {
+            if (e.target === logoutModalOverlay) {
+                hideLogoutModal();
+            }
+        });
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('logoutModalOverlay');
+            if (modal && modal.style.display === 'flex') {
+                hideLogoutModal();
+            }
+        }
+    });
 
     // Window resize handler
     window.addEventListener('resize', handleResize);

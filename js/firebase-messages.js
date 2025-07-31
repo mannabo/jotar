@@ -2,18 +2,35 @@
 class FirebaseMessagesHandler {
     constructor() {
         this.db = null;
+        this.auth = null;
         this.isFirebaseReady = false;
-        this.init();
+        this.initializationPromise = this.init();
     }
     
     async init() {
         try {
+            // Wait for Firebase to be available
+            if (typeof window.initializeFirebase !== 'function') {
+                console.log('Firebase initialization function not available yet, waiting...');
+                await new Promise(resolve => {
+                    const checkFirebase = () => {
+                        if (typeof window.initializeFirebase === 'function') {
+                            resolve();
+                        } else {
+                            setTimeout(checkFirebase, 100);
+                        }
+                    };
+                    checkFirebase();
+                });
+            }
+            
             // Initialize Firebase
             const firebase = await window.initializeFirebase();
-            if (firebase) {
+            if (firebase && firebase.db) {
                 this.db = firebase.db;
+                this.auth = firebase.auth;
                 this.isFirebaseReady = true;
-                console.log('Firebase Messages Handler ready');
+                console.log('Firebase Messages Handler ready with auth');
             } else {
                 console.log('Firebase not available, using localStorage fallback');
             }
@@ -22,7 +39,13 @@ class FirebaseMessagesHandler {
         }
     }
     
+    async waitForInit() {
+        await this.initializationPromise;
+    }
+    
     async saveMessage(messageData) {
+        await this.waitForInit();
+        
         if (this.isFirebaseReady && this.db) {
             return await this.saveToFirebase(messageData);
         } else {
@@ -84,6 +107,8 @@ class FirebaseMessagesHandler {
     }
     
     async getMessages() {
+        await this.waitForInit();
+        
         if (this.isFirebaseReady && this.db) {
             return await this.getFromFirebase();
         } else {
@@ -96,9 +121,17 @@ class FirebaseMessagesHandler {
         try {
             const { collection, getDocs, query, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
             
+            // Check if user is authenticated
+            if (!this.auth || !this.auth.currentUser) {
+                console.log('User not authenticated, cannot access Firebase');
+                return [];
+            }
+            
+            console.log('Loading messages for authenticated user:', this.auth.currentUser.email);
+            
             const q = query(
-                collection(this.db, 'contactMessages'),
-                orderBy('timestamp', 'desc'),
+                collection(this.db, 'contactMessages'), 
+                orderBy('createdAt', 'desc'),
                 limit(100)
             );
             
@@ -116,6 +149,9 @@ class FirebaseMessagesHandler {
             return messages;
         } catch (error) {
             console.error('Error loading from Firebase:', error);
+            if (error.code === 'permission-denied') {
+                console.error('Permission denied - user may not be authenticated or authorized');
+            }
             return [];
         }
     }

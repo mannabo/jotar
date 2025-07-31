@@ -9,6 +9,9 @@
 </head>
 <body>
     <div class="admin-container">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
         <!-- Sidebar Navigation -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -88,7 +91,7 @@
                         <input type="text" placeholder="Search...">
                     </div>
                     <div class="header-actions">
-                        <a href="/" target="_blank" class="homepage-btn" title="Buka Laman Utama" onclick="openHomepage(); return false;">
+                        <a href="https://jotarjohor.com/" target="_blank" class="homepage-btn" title="Buka Laman Utama">
                             <i class="fas fa-external-link-alt"></i>
                             <span>Laman Utama</span>
                         </a>
@@ -582,33 +585,42 @@
         </main>
     </div>
 
-    <script type="module" src="admin-script.js"></script>
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal-overlay" id="logoutModalOverlay" style="display: none;">
+        <div class="logout-modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <h3>Confirm Logout</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout from the admin panel?</p>
+                <small class="modal-note">You will need to sign in again to access the admin dashboard.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogoutBtn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-text">Logout</span>
+                    <div class="btn-loader" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Firebase config first -->
     <script src="../js/firebase-config.js"></script>
+    <!-- Load Firebase messages handler second -->  
     <script src="../js/firebase-messages.js"></script>
+    <!-- Load admin scripts after Firebase is ready -->
+    <script type="module" src="admin-script.js"></script>
     <script src="admin-messages.js"></script>
     
-    <script>
-        // Homepage button functionality
-        function openHomepage() {
-            // Try multiple approaches to ensure button works
-            const currentUrl = window.location.href;
-            const baseUrl = currentUrl.replace('/admin/', '/').replace('/admin', '/');
-            const homepageUrl = baseUrl.split('/admin')[0] + '/';
-            
-            console.log('Opening homepage:', homepageUrl);
-            window.open(homepageUrl, '_blank');
-        }
-        
-        // Also add event listener as backup
-        document.addEventListener('DOMContentLoaded', function() {
-            const homepageBtn = document.querySelector('.homepage-btn');
-            if (homepageBtn) {
-                homepageBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openHomepage();
-                });
-            }
-        });
-    </script>
 </body>
 </html>

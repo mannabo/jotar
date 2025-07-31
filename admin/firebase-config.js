@@ -101,14 +101,25 @@ export const addMessage = async (messageData) => {
 
 export const getMessages = async () => {
     try {
+        // Check if user is authenticated
+        if (!auth.currentUser) {
+            console.error('User not authenticated');
+            return { success: false, error: 'User not authenticated' };
+        }
+        
+        console.log('Getting messages for user:', auth.currentUser.email);
+        
         const q = query(collection(db, "contactMessages"), orderBy("timestamp", "desc"));
         const querySnapshot = await getDocs(q);
         const messages = [];
         querySnapshot.forEach((doc) => {
             messages.push({ id: doc.id, ...doc.data() });
         });
+        
+        console.log('Successfully loaded', messages.length, 'messages');
         return { success: true, data: messages };
     } catch (error) {
+        console.error('Error getting messages:', error);
         return { success: false, error: error.message };
     }
 };

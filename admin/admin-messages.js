@@ -23,15 +23,23 @@ class AdminMessagesHandler {
         this.init();
     }
     
-    init() {
+    async init() {
         // Request notification permission
         this.requestNotificationPermission();
         
-        // Load messages on page load
-        this.loadMessages();
-        
-        // Setup real-time Firebase listener
-        this.setupFirebaseListener();
+        // Wait for Firebase to be ready before loading messages
+        try {
+            await this.waitForFirebase();
+            console.log('Firebase ready, loading messages...');
+            
+            // Load messages on page load
+            this.loadMessages();
+            
+            // Setup real-time Firebase listener
+            this.setupFirebaseListener();
+        } catch (error) {
+            console.error('Failed to initialize Firebase for messages:', error);
+        }
         
         // Event listeners
         if (this.markAllReadBtn) {
@@ -55,6 +63,25 @@ class AdminMessagesHandler {
         }, 30000);
     }
     
+    async waitForFirebase() {
+        // Wait for Firebase initialization function to be available
+        await new Promise(resolve => {
+            const checkFirebase = () => {
+                if (typeof window.initializeFirebase === 'function' && window.firebaseMessages) {
+                    resolve();
+                } else {
+                    setTimeout(checkFirebase, 100);
+                }
+            };
+            checkFirebase();
+        });
+        
+        // Wait for Firebase messages handler to be fully initialized
+        if (window.firebaseMessages) {
+            await window.firebaseMessages.waitForInit();
+        }
+    }
+    
     async loadMessages() {
         const messages = await this.getMessages();
         this.renderMessages(messages);
@@ -65,12 +92,25 @@ class AdminMessagesHandler {
     
     async getMessages() {
         try {
-            if (window.firebaseMessages) {
-                return await window.firebaseMessages.getMessages();
-            } else {
-                console.error('Firebase messages handler not available');
-                return [];
+            // Wait for Firebase messages handler to be ready
+            if (!window.firebaseMessages) {
+                console.log('Firebase messages handler not available yet, waiting...');
+                await new Promise(resolve => {
+                    const checkHandler = () => {
+                        if (window.firebaseMessages) {
+                            resolve();
+                        } else {
+                            setTimeout(checkHandler, 100);
+                        }
+                    };
+                    checkHandler();
+                });
             }
+            
+            // Wait for Firebase to be fully initialized
+            await window.firebaseMessages.waitForInit();
+            
+            return await window.firebaseMessages.getMessages();
         } catch (error) {
             console.error('Error loading messages:', error);
             return [];

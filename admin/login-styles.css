@@ -6,13 +6,13 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .login-container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
     position: relative;
 }
 
@@ -332,11 +332,13 @@ body {
 @media (max-width: 768px) {
     .login-container {
         flex-direction: column;
+        min-height: 100vh;
     }
     
     .login-background {
-        height: 40vh;
+        height: 35vh;
         flex: none;
+        min-height: 200px;
     }
     
     .login-form-container {
@@ -346,10 +348,13 @@ body {
         margin-top: -20px;
         position: relative;
         z-index: 10;
+        flex: 1;
+        min-height: calc(65vh + 20px);
+        overflow-y: auto;
     }
     
     .login-form {
-        padding: 40px 30px;
+        padding: 40px 30px 60px 30px;
     }
     
     .logo-section {
@@ -364,17 +369,39 @@ body {
     .logo-section h1 {
         font-size: 28px;
     }
+    
+    .password-toggle {
+        right: 14px;
+        padding: 6px;
+        min-width: 36px;
+        min-height: 36px;
+    }
 }
 
 @media (max-width: 480px) {
     .login-form {
-        padding: 30px 20px;
+        padding: 30px 20px 80px 20px;
     }
     
     .form-options {
         flex-direction: column;
         gap: 15px;
         align-items: flex-start;
+    }
+    
+    .password-toggle {
+        right: 12px;
+        padding: 8px;
+        font-size: 18px;
+        min-width: 40px;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .password-toggle i {
+        font-size: 16px;
     }
 }
 
