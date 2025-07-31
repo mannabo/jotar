@@ -88,7 +88,7 @@
                         <input type="text" placeholder="Search...">
                     </div>
                     <div class="header-actions">
-                        <a href="../index.html" target="_blank" class="homepage-btn" title="Buka Laman Utama">
+                        <a href="/" target="_blank" class="homepage-btn" title="Buka Laman Utama" onclick="openHomepage(); return false;">
                             <i class="fas fa-external-link-alt"></i>
                             <span>Laman Utama</span>
                         </a>
@@ -586,5 +586,29 @@
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-messages.js"></script>
     <script src="admin-messages.js"></script>
+    
+    <script>
+        // Homepage button functionality
+        function openHomepage() {
+            // Try multiple approaches to ensure button works
+            const currentUrl = window.location.href;
+            const baseUrl = currentUrl.replace('/admin/', '/').replace('/admin', '/');
+            const homepageUrl = baseUrl.split('/admin')[0] + '/';
+            
+            console.log('Opening homepage:', homepageUrl);
+            window.open(homepageUrl, '_blank');
+        }
+        
+        // Also add event listener as backup
+        document.addEventListener('DOMContentLoaded', function() {
+            const homepageBtn = document.querySelector('.homepage-btn');
+            if (homepageBtn) {
+                homepageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openHomepage();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
