@@ -26,14 +26,14 @@ jobs:
           ! -name 'deploy.sh' \
           | head -20
     
-    - name: 🔐 Setup SSH
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
+    - name: 🔐 Setup SSH with password
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y sshpass
     
     - name: 🧹 Prepare deployment directory
       run: |
-        ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
+        sshpass -p '${{ secrets.HOSTINGER_PASSWORD }}' ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
           # Create jotarjohor.com specific directory if doesn't exist
           mkdir -p /files/domains/jotarjohor.com/public_html
           cd /files/domains/jotarjohor.com/public_html
@@ -51,7 +51,7 @@ jobs:
     
     - name: 📤 Deploy via rsync over SSH
       run: |
-        rsync -avz --delete -e "ssh -p 65002" \
+        sshpass -p '${{ secrets.HOSTINGER_PASSWORD }}' rsync -avz --delete -e "ssh -p 65002 -o StrictHostKeyChecking=no" \
           --exclude='.git/' \
           --exclude='.github/' \
           --exclude='*.md' \
@@ -66,7 +66,7 @@ jobs:
     
     - name: 🔧 Set correct permissions
       run: |
-        ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
+        sshpass -p '${{ secrets.HOSTINGER_PASSWORD }}' ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
           cd /files/domains/jotarjohor.com/public_html
           find . -type f -exec chmod 644 {} \;
           find . -type d -exec chmod 755 {} \;
