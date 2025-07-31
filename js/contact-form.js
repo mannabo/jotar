@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         handleFormSubmit();
     });
     
-    function handleFormSubmit() {
+    async function handleFormSubmit() {
         console.log('Form submit triggered');
         
         // Get form elements first
@@ -54,70 +54,69 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Get form values
-        const name = nameEl.value;
-        const email = emailEl.value;
-        const subject = subjectEl.value;
-        const message = messageEl.value;
+        // Get form values and trim whitespace
+        const name = nameEl.value ? nameEl.value.trim() : '';
+        const email = emailEl.value ? emailEl.value.trim() : '';
+        const subject = subjectEl.value ? subjectEl.value.trim() : '';
+        const message = messageEl.value ? messageEl.value.trim() : '';
         
         console.log('Form values:', { name, email, subject, message });
+        console.log('Name length:', name.length, 'Name value:', JSON.stringify(name));
         
         // Validate form fields
-        if (!name || name.trim() === '') {
-            showMessage('Sila masukkan nama anda.', 'error');
+        if (!name || name === '') {
+            console.log('Name validation failed');
+            showMessage('Please enter your name.', 'error');
             return;
         }
         
-        if (!email || email.trim() === '') {
-            showMessage('Sila masukkan email anda.', 'error');
+        if (!email || email === '') {
+            console.log('Email validation failed');
+            showMessage('Please enter your email.', 'error');
             return;
         }
         
-        if (!isValidEmail(email.trim())) {
-            showMessage('Sila masukkan email yang sah.', 'error');
+        if (!isValidEmail(email)) {
+            console.log('Email format validation failed');
+            showMessage('Please enter a valid email address.', 'error');
             return;
         }
         
-        if (!subject || subject.trim() === '') {
-            showMessage('Sila masukkan subjek.', 'error');
+        if (!subject || subject === '') {
+            console.log('Subject validation failed');
+            showMessage('Please enter a subject.', 'error');
             return;
         }
         
-        if (!message || message.trim() === '') {
-            showMessage('Sila masukkan mesej anda.', 'error');
+        if (!message || message === '') {
+            console.log('Message validation failed');
+            showMessage('Please enter your message.', 'error');
             return;
         }
-        
-        // Show loading
-        setLoadingState(true);
         
         // Save message to Firebase
-        setTimeout(async function() {
-            const messageData = {
-                id: 'msg_' + Date.now(),
-                name: name.trim(),
-                email: email.trim(),
-                subject: subject.trim(),
-                message: message.trim(),
-                timestamp: new Date().toISOString(),
-                status: 'unread'
-            };
+        const messageData = {
+            id: 'msg_' + Date.now(),
+            name: name,
+            email: email,
+            subject: subject,
+            message: message,
+            timestamp: new Date().toISOString(),
+            status: 'unread'
+        };
+        
+        const result = await saveMessageToFirebase(messageData);
+        
+        if (result.success) {
+            // Show success
+            showMessage('Thank you! Your message has been sent successfully.', 'success');
             
-            const result = await saveMessageToFirebase(messageData);
-            
-            if (result.success) {
-                // Show success
-                showMessage('Terima kasih! Mesej anda telah berjaya dihantar.', 'success');
-                
-                // Reset form
-                form.reset();
-            } else {
-                // Show error
-                showMessage('Maaf, terdapat masalah menghantar mesej. Sila cuba lagi.', 'error');
-            }
-            
-            setLoadingState(false);
-        }, 1500);
+            // Reset form
+            form.reset();
+        } else {
+            // Show error
+            showMessage('Sorry, there was an error sending your message. Please try again.', 'error');
+        }
     }
     
     async function saveMessageToFirebase(messageData) {
@@ -159,20 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function setLoadingState(loading) {
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnLoading = submitBtn.querySelector('.btn-loading');
-        
-        if (loading) {
-            submitBtn.disabled = true;
-            if (btnText) btnText.style.display = 'none';
-            if (btnLoading) btnLoading.style.display = 'inline-flex';
-        } else {
-            submitBtn.disabled = false;
-            if (btnText) btnText.style.display = 'inline';
-            if (btnLoading) btnLoading.style.display = 'none';
-        }
-    }
     
     function showMessage(message, type) {
         if (!formMessage) return;

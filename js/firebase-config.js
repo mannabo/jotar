@@ -2,12 +2,12 @@
 // Replace these values with your actual Firebase project config
 
 const firebaseConfig = {
-    apiKey: "your-api-key-here",
-    authDomain: "jotar-website.firebaseapp.com",
-    projectId: "jotar-website",
-    storageBucket: "jotar-website.appspot.com",
-    messagingSenderId: "your-sender-id",
-    appId: "your-app-id"
+    apiKey: "AIzaSyBBLLZKhaCnn9ETyqfo8L-sWU8noaiy1Q4",
+    authDomain: "jotar-admin.firebaseapp.com",
+    projectId: "jotar-admin",
+    storageBucket: "jotar-admin.firebasestorage.app",
+    messagingSenderId: "740997360642",
+    appId: "1:740997360642:web:86413c7a9cd79dee320b1b"
 };
 
 // Initialize Firebase

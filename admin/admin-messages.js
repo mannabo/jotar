@@ -14,13 +14,24 @@ class AdminMessagesHandler {
         
         // Notification badge in sidebar
         this.notificationBadge = document.querySelector('.notification-badge');
+        this.headerNotificationCount = document.querySelector('.notification-count');
+        
+        // Notification states
+        this.lastUnreadCount = 0;
+        this.hasPermission = false;
         
         this.init();
     }
     
     init() {
+        // Request notification permission
+        this.requestNotificationPermission();
+        
         // Load messages on page load
         this.loadMessages();
+        
+        // Setup real-time Firebase listener
+        this.setupFirebaseListener();
         
         // Event listeners
         if (this.markAllReadBtn) {
@@ -38,7 +49,7 @@ class AdminMessagesHandler {
         // Listen for message updates from main website
         window.addEventListener('messagesUpdated', this.handleMessagesUpdate.bind(this));
         
-        // Auto-refresh every 30 seconds
+        // Auto-refresh every 30 seconds as fallback
         setInterval(() => {
             this.loadMessages();
         }, 30000);
@@ -49,6 +60,7 @@ class AdminMessagesHandler {
         this.renderMessages(messages);
         this.updateStats(messages);
         this.updateNotificationBadge(messages);
+        this.checkForNewMessages(messages);
     }
     
     async getMessages() {
@@ -324,6 +336,7 @@ class AdminMessagesHandler {
     updateNotificationBadge(messages) {
         const unreadCount = messages.filter(msg => msg.status === 'unread').length;
         
+        // Update sidebar badge
         if (this.notificationBadge) {
             if (unreadCount > 0) {
                 this.notificationBadge.textContent = unreadCount;
@@ -332,6 +345,19 @@ class AdminMessagesHandler {
                 this.notificationBadge.style.display = 'none';
             }
         }
+        
+        // Update header notification count
+        if (this.headerNotificationCount) {
+            if (unreadCount > 0) {
+                this.headerNotificationCount.textContent = unreadCount;
+                this.headerNotificationCount.style.display = 'inline';
+            } else {
+                this.headerNotificationCount.style.display = 'none';
+            }
+        }
+        
+        // Update page title with notification count
+        this.updatePageTitle(unreadCount);
     }
     
     handleMessagesUpdate(event) {
@@ -355,6 +381,193 @@ class AdminMessagesHandler {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+    
+    async requestNotificationPermission() {
+        if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            this.hasPermission = permission === 'granted';
+            console.log('Notification permission:', permission);
+        }
+    }
+    
+    async setupFirebaseListener() {
+        try {
+            if (window.firebaseMessages && window.firebaseMessages.setupRealTimeListener) {
+                const unsubscribe = await window.firebaseMessages.setupRealTimeListener((messages) => {
+                    console.log('Real-time Firebase update received:', messages.length, 'messages');
+                    this.renderMessages(messages);
+                    this.updateStats(messages);
+                    this.updateNotificationBadge(messages);
+                    this.checkForNewMessages(messages);
+                });
+                console.log('Firebase real-time listener setup successfully');
+            } else {
+                console.log('Firebase real-time listener not available, using polling fallback');
+            }
+        } catch (error) {
+            console.error('Error setting up Firebase listener:', error);
+        }
+    }
+    
+    checkForNewMessages(messages) {
+        const currentUnreadCount = messages.filter(msg => msg.status === 'unread').length;
+        
+        // Check if there are new unread messages
+        if (currentUnreadCount > this.lastUnreadCount && this.lastUnreadCount > 0) {
+            const newMessagesCount = currentUnreadCount - this.lastUnreadCount;
+            this.showNewMessageNotification(newMessagesCount, messages);
+        }
+        
+        this.lastUnreadCount = currentUnreadCount;
+    }
+    
+    showNewMessageNotification(count, messages) {
+        // Browser notification
+        if (this.hasPermission) {
+            const latestMessage = messages.find(msg => msg.status === 'unread');
+            const title = count === 1 ? 'New Message Received' : `${count} New Messages Received`;
+            const body = latestMessage ? 
+                `From: ${latestMessage.name}\nSubject: ${latestMessage.subject}` : 
+                'You have new contact messages';
+            
+            const notification = new Notification(title, {
+                body: body,
+                icon: '../jotar-logo.png',
+                badge: '../jotar-logo.png',
+                tag: 'new-message',
+                requireInteraction: true
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                // Switch to messages section if not already there
+                const messageSection = document.querySelector('[data-section="message"]');
+                if (messageSection) {
+                    messageSection.click();
+                }
+                notification.close();
+            };
+            
+            // Auto close after 10 seconds
+            setTimeout(() => {
+                notification.close();
+            }, 10000);
+        }
+        
+        // In-app notification
+        this.showInAppNotification(count);
+        
+        // Play notification sound
+        this.playNotificationSound();
+    }
+    
+    showInAppNotification(count) {
+        const notification = document.createElement('div');
+        notification.className = 'in-app-notification';
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-envelope"></i>
+                <span>${count === 1 ? 'New message received!' : `${count} new messages received!`}</span>
+                <button class="close-notification">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        // Add styles if not already added
+        if (!document.getElementById('notification-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'notification-styles';
+            styles.textContent = `
+                .in-app-notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 16px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease-out;
+                    max-width: 350px;
+                }
+                
+                .notification-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                
+                .close-notification {
+                    background: none;
+                    border: none;
+                    color: white;
+                    cursor: pointer;
+                    font-size: 14px;
+                    margin-left: auto;
+                }
+                
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(notification);
+        
+        // Close button functionality
+        notification.querySelector('.close-notification').addEventListener('click', () => {
+            notification.remove();
+        });
+        
+        // Auto close after 8 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 8000);
+    }
+    
+    playNotificationSound() {
+        try {
+            // Create a simple beep sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        } catch (error) {
+            console.log('Could not play notification sound:', error);
+        }
+    }
+    
+    updatePageTitle(unreadCount) {
+        const baseTitle = 'JOTAR Admin Dashboard';
+        if (unreadCount > 0) {
+            document.title = `(${unreadCount}) ${baseTitle}`;
+        } else {
+            document.title = baseTitle;
+        }
     }
 }
 

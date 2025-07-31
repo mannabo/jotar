@@ -70,27 +70,6 @@ document.querySelectorAll('.stat').forEach(stat => {
     observer.observe(stat);
 });
 
-// Contact form handling
-document.querySelector('.contact-form form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(e.target);
-    const name = formData.get('name') || e.target.querySelector('input[type="text"]').value;
-    const email = formData.get('email') || e.target.querySelector('input[type="email"]').value;
-    const subject = formData.get('subject') || e.target.querySelectorAll('input[type="text"]')[1].value;
-    const message = formData.get('message') || e.target.querySelector('textarea').value;
-    
-    // Simple validation
-    if (!name || !email || !subject || !message) {
-        alert('Please fill in all fields');
-        return;
-    }
-    
-    // Simulate form submission
-    alert('Thank you for your message! We will get back to you soon.');
-    e.target.reset();
-});
 
 // Add active state to navigation links based on scroll position
 window.addEventListener('scroll', () => {
