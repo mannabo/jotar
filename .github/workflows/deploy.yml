@@ -34,14 +34,14 @@ jobs:
     - name: 🧹 Prepare deployment directory
       run: |
         ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
-          # Create public_html if doesn't exist
-          mkdir -p public_html
-          cd public_html
+          # Create jotarjohor.com specific directory if doesn't exist
+          mkdir -p /files/domains/jotarjohor.com/public_html
+          cd /files/domains/jotarjohor.com/public_html
           
           # Create backup if files exist
           if [ \"\$(ls -A . 2>/dev/null)\" ]; then
-            mkdir -p ../backups/backup_\$(date +%Y%m%d_%H%M%S)
-            cp -r . ../backups/backup_\$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
+            mkdir -p ../../../backups/jotarjohor_backup_\$(date +%Y%m%d_%H%M%S)
+            cp -r . ../../../backups/jotarjohor_backup_\$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
             
             # Clean directory (keep .htaccess if exists)
             find . -name '.htaccess' -prune -o -type f -exec rm {} + 2>/dev/null || true
@@ -62,12 +62,12 @@ jobs:
           --exclude='Thumbs.db' \
           --exclude='*.log' \
           --exclude='*_key*' \
-          ./ u359923617@151.106.117.45:public_html/
+          ./ u359923617@151.106.117.45:/files/domains/jotarjohor.com/public_html/
     
     - name: 🔧 Set correct permissions
       run: |
         ssh -p 65002 -o StrictHostKeyChecking=no u359923617@151.106.117.45 "
-          cd public_html
+          cd /files/domains/jotarjohor.com/public_html
           find . -type f -exec chmod 644 {} \;
           find . -type d -exec chmod 755 {} \;
           chmod 644 *.html *.css *.js 2>/dev/null || true
