@@ -1,161 +1,136 @@
-// Contact Form Handler
-class ContactFormHandler {
-    constructor() {
-        this.form = document.getElementById('contactForm');
-        this.submitBtn = document.getElementById('submitBtn');
-        this.formMessage = document.getElementById('formMessage');
-        this.btnText = this.submitBtn.querySelector('.btn-text');
-        this.btnLoading = this.submitBtn.querySelector('.btn-loading');
-        
-        this.init();
+// Simple Contact Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+    
+    if (!form) {
+        console.log('Contact form not found');
+        return;
     }
     
-    init() {
-        if (this.form) {
-            this.form.addEventListener('submit', this.handleSubmit.bind(this));
-        }
-    }
+    console.log('Contact form loaded successfully');
     
-    async handleSubmit(e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
+        handleFormSubmit();
+    });
+    
+    function handleFormSubmit() {
+        console.log('Form submit triggered');
         
-        // Get form data using direct element access
-        const messageData = {
-            id: this.generateId(),
-            name: document.getElementById('contactName').value.trim(),
-            email: document.getElementById('contactEmail').value.trim(),
-            subject: document.getElementById('contactSubject').value.trim(),
-            message: document.getElementById('contactMessage').value.trim(),
-            timestamp: new Date().toISOString(),
-            status: 'unread'
-        };
+        // Get form values
+        const name = document.getElementById('contactName').value;
+        const email = document.getElementById('contactEmail').value;
+        const subject = document.getElementById('contactSubject').value;
+        const message = document.getElementById('contactMessage').value;
         
-        // Validate form
-        if (!this.validateForm(messageData)) {
+        console.log('Form values:', { name, email, subject, message });
+        
+        // Validate
+        if (!name || name.trim() === '') {
+            showMessage('Please enter your name.', 'error');
             return;
         }
         
-        // Show loading state
-        this.setLoadingState(true);
+        if (!email || email.trim() === '') {
+            showMessage('Please enter your email.', 'error');
+            return;
+        }
         
-        try {
-            // Simulate sending delay for better UX
-            await new Promise(resolve => setTimeout(resolve, 1500));
+        if (!isValidEmail(email.trim())) {
+            showMessage('Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        if (!subject || subject.trim() === '') {
+            showMessage('Please enter a subject.', 'error');
+            return;
+        }
+        
+        if (!message || message.trim() === '') {
+            showMessage('Please enter your message.', 'error');
+            return;
+        }
+        
+        // Show loading
+        setLoadingState(true);
+        
+        // Simulate sending
+        setTimeout(function() {
+            // Save message
+            const messageData = {
+                id: 'msg_' + Date.now(),
+                name: name.trim(),
+                email: email.trim(),
+                subject: subject.trim(),
+                message: message.trim(),
+                timestamp: new Date().toISOString(),
+                status: 'unread'
+            };
             
-            // Save message to localStorage
-            this.saveMessage(messageData);
+            saveMessage(messageData);
             
-            // Show success message
-            this.showMessage('Thank you! Your message has been sent successfully.', 'success');
+            // Show success
+            showMessage('Thank you! Your message has been sent successfully.', 'success');
             
             // Reset form
-            this.form.reset();
+            form.reset();
+            setLoadingState(false);
+        }, 1500);
+    }
+    
+    function saveMessage(messageData) {
+        try {
+            let messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+            messages.unshift(messageData);
             
+            if (messages.length > 100) {
+                messages = messages.slice(0, 100);
+            }
+            
+            localStorage.setItem('contactMessages', JSON.stringify(messages));
+            
+            const unreadCount = messages.filter(msg => msg.status === 'unread').length;
+            localStorage.setItem('unreadMessageCount', unreadCount.toString());
+            
+            console.log('Message saved successfully');
         } catch (error) {
-            console.error('Form submission error:', error);
-            this.showMessage('Sorry, there was an error sending your message. Please try again.', 'error');
-        } finally {
-            this.setLoadingState(false);
+            console.error('Error saving message:', error);
         }
     }
     
-    validateForm(data) {
-        // Debug log
-        console.log('Form data for validation:', data);
+    function setLoadingState(loading) {
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
         
-        // Basic validation
-        if (!data.name || data.name.length === 0) {
-            this.showMessage('Please enter your name.', 'error');
-            return false;
+        if (loading) {
+            submitBtn.disabled = true;
+            if (btnText) btnText.style.display = 'none';
+            if (btnLoading) btnLoading.style.display = 'inline-flex';
+        } else {
+            submitBtn.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoading) btnLoading.style.display = 'none';
         }
-        
-        if (!data.email || data.email.length === 0 || !this.isValidEmail(data.email)) {
-            this.showMessage('Please enter a valid email address.', 'error');
-            return false;
-        }
-        
-        if (!data.subject || data.subject.length === 0) {
-            this.showMessage('Please enter a subject.', 'error');
-            return false;
-        }
-        
-        if (!data.message || data.message.length === 0) {
-            this.showMessage('Please enter your message.', 'error');
-            return false;
-        }
-        
-        return true;
     }
     
-    isValidEmail(email) {
+    function showMessage(message, type) {
+        if (!formMessage) return;
+        
+        formMessage.className = `form-message ${type}`;
+        formMessage.textContent = message;
+        formMessage.style.display = 'block';
+        
+        setTimeout(function() {
+            formMessage.style.display = 'none';
+        }, 5000);
+        
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
-    
-    generateId() {
-        return 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    }
-    
-    saveMessage(messageData) {
-        // Get existing messages from localStorage
-        let messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-        
-        // Add new message to the beginning of array
-        messages.unshift(messageData);
-        
-        // Keep only last 100 messages
-        if (messages.length > 100) {
-            messages = messages.slice(0, 100);
-        }
-        
-        // Save back to localStorage
-        localStorage.setItem('contactMessages', JSON.stringify(messages));
-        
-        // Update message counter for admin
-        this.updateMessageCounter();
-    }
-    
-    updateMessageCounter() {
-        const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-        const unreadCount = messages.filter(msg => msg.status === 'unread').length;
-        
-        // Store unread count for admin panel
-        localStorage.setItem('unreadMessageCount', unreadCount.toString());
-        
-        // Dispatch custom event for admin panel
-        window.dispatchEvent(new CustomEvent('messagesUpdated', {
-            detail: { unreadCount }
-        }));
-    }
-    
-    setLoadingState(loading) {
-        if (loading) {
-            this.submitBtn.disabled = true;
-            this.btnText.style.display = 'none';
-            this.btnLoading.style.display = 'inline-flex';
-        } else {
-            this.submitBtn.disabled = false;
-            this.btnText.style.display = 'inline';
-            this.btnLoading.style.display = 'none';
-        }
-    }
-    
-    showMessage(message, type) {
-        this.formMessage.className = `form-message ${type}`;
-        this.formMessage.textContent = message;
-        this.formMessage.style.display = 'block';
-        
-        // Auto hide after 5 seconds
-        setTimeout(() => {
-            this.formMessage.style.display = 'none';
-        }, 5000);
-        
-        // Scroll to message
-        this.formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-}
-
-// Initialize contact form when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new ContactFormHandler();
 });
