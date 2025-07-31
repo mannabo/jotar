@@ -1561,4 +1561,45 @@ input:checked + .slider:before {
     color: #2c3e50;
     background: #f8f9fa;
 }
+
+
+/* Header Homepage Button */
+.homepage-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #2e7d32;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.homepage-btn:hover {
+    background: #1b5e20;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.homepage-btn i {
+    font-size: 12px;
+}
+
+/* Mobile responsive for header homepage button */
+@media (max-width: 768px) {
+    .homepage-btn span {
+        display: none;
+    }
+    
+    .homepage-btn {
+        padding: 8px;
+        min-width: auto;
+    }
 }
