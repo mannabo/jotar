@@ -1,39 +1,37 @@
-● Untuk custom domain jotarjohor.my:
+● Sekarang automatic deployment sudah setup, jadi workflow anda sangat simple:
 
-1. GitHub Settings:
-- Go to: https://github.com/mannabo/jotar/settings/pages
-- Custom domain: Masukkan jotarjohor.my
-- Save (akan create CNAME file automatic)
+  🚀 Arahan untuk Go Live:
 
-2. DNS Settings (Domain Provider):
-Tambah DNS records ni:
+  Option 1: Automatic (Recommended)
 
-Type: A
-Name: @
-Value: 185.199.108.153
+  git add .
+  git commit -m "Update website content"
+  git push origin main
+  ✅ That's it! Website akan auto-deploy dalam 2-3 minit.
 
-Type: A
-Name: @
-Value: 185.199.109.153
+  Option 2: Manual Trigger
 
-Type: A
-Name: @
-Value: 185.199.110.153
+  1. Pergi ke GitHub repository
+  2. Click Actions tab
+  3. Pilih "Deploy JOTAR to jotarjohor.com"
+  4. Click Run workflow > Run workflow
 
-Type: A
-Name: @
-Value: 185.199.111.153
+  📋 Daily Workflow:
 
-Type: CNAME
-Name: www
-Value: mannabo.github.io
+  1. Edit files dalam project anda
+  2. Test locally (optional)
+  3. Run 3 commands di atas
+  4. Done! Website live automatically
 
-3. Wait 24-48 hours untuk DNS propagate
+  🔍 Monitor Deployment:
 
-Result:
-- jotarjohor.my → your website
-- www.jotarjohor.my → your website
-- Auto HTTPS enabled
-- Auto deploy tetap sama (git push)
+  - Check GitHub Actions untuk status
+  - Visit https://jotarjohor.com untuk verify changes
 
-Mana awak beli domain tu? Different provider ada different interface untuk DNS settings.
+  ⚡ Quick Commands untuk Save Time:
+
+  # Quick commit and deploy
+  git add . && git commit -m "Website updates" && git push origin main
+
+  Sekarang setiap kali anda push ke main branch, website akan automatically update 
+  dalam beberapa minit tanpa manual upload ke hosting!

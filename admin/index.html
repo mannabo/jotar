@@ -287,24 +287,45 @@
             <!-- Message Content -->
             <section class="content-section" id="message-section">
                 <div class="section-header">
-                    <h2>Messages</h2>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Compose
-                    </button>
+                    <h2>Contact Messages</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="markAllReadBtn">
+                            <i class="fas fa-check-double"></i>
+                            Mark All Read
+                        </button>
+                        <button class="btn btn-danger" id="clearMessagesBtn">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                        <button class="btn btn-primary" id="refreshMessagesBtn">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
+                        </button>
+                    </div>
                 </div>
-                <div class="messages-container">
-                    <div class="message-item unread">
-                        <div class="message-sender">
-                            <div class="sender-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="sender-info">
-                                <h5>Siti Aminah</h5>
-                                <p>Training inquiry</p>
-                            </div>
+                
+                <div class="messages-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalMessages">0</span>
+                        <span class="stat-label">Total Messages</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="unreadMessages">0</span>
+                        <span class="stat-label">Unread</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="todayMessages">0</span>
+                        <span class="stat-label">Today</span>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messagesContainer">
+                    <div class="no-messages" id="noMessages">
+                        <div class="no-messages-icon">
+                            <i class="fas fa-inbox"></i>
                         </div>
-                        <div class="message-time">2 hours ago</div>
+                        <h3>No Messages Yet</h3>
+                        <p>Contact messages from your website will appear here.</p>
                     </div>
                 </div>
             </section>
@@ -562,5 +583,8 @@
     </div>
 
     <script type="module" src="admin-script.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-messages.js"></script>
+    <script src="admin-messages.js"></script>
 </body>
 </html>

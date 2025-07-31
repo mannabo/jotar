@@ -240,19 +240,25 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form>
+                    <form id="contactForm">
                         <div class="form-group">
-                            <input type="text" placeholder="Your Name" required>
-                            <input type="email" placeholder="Your Email" required>
+                            <input type="text" id="contactName" name="name" placeholder="Your Name" required>
+                            <input type="email" id="contactEmail" name="email" placeholder="Your Email" required>
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Subject" required>
+                            <input type="text" id="contactSubject" name="subject" placeholder="Subject" required>
                         </div>
                         <div class="form-group">
-                            <textarea placeholder="Your Message" rows="5" required></textarea>
+                            <textarea id="contactMessage" name="message" placeholder="Your Message" rows="5" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Sending...
+                            </span>
+                        </button>
                     </form>
+                    <div id="formMessage" class="form-message" style="display: none;"></div>
                 </div>
             </div>
         </div>
@@ -307,5 +313,8 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-messages.js"></script>
+    <script src="js/contact-form.js"></script>
 </body>
 </html>

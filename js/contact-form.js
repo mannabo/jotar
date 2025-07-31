@@ -56,9 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading
         setLoadingState(true);
         
-        // Simulate sending
-        setTimeout(function() {
-            // Save message
+        // Save message to Firebase
+        setTimeout(async function() {
             const messageData = {
                 id: 'msg_' + Date.now(),
                 name: name.trim(),
@@ -69,18 +68,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 status: 'unread'
             };
             
-            saveMessage(messageData);
+            const result = await saveMessageToFirebase(messageData);
             
-            // Show success
-            showMessage('Thank you! Your message has been sent successfully.', 'success');
+            if (result.success) {
+                // Show success
+                showMessage('Thank you! Your message has been sent successfully.', 'success');
+                
+                // Reset form
+                form.reset();
+            } else {
+                // Show error
+                showMessage('Sorry, there was an error sending your message. Please try again.', 'error');
+            }
             
-            // Reset form
-            form.reset();
             setLoadingState(false);
         }, 1500);
     }
     
-    function saveMessage(messageData) {
+    async function saveMessageToFirebase(messageData) {
+        try {
+            // Wait for Firebase handler to be ready
+            if (window.firebaseMessages) {
+                const result = await window.firebaseMessages.saveMessage(messageData);
+                return result;
+            } else {
+                // Fallback to localStorage if Firebase not available
+                console.log('Firebase not available, using localStorage fallback');
+                return saveToLocalStorageFallback(messageData);
+            }
+        } catch (error) {
+            console.error('Error saving message:', error);
+            return saveToLocalStorageFallback(messageData);
+        }
+    }
+    
+    function saveToLocalStorageFallback(messageData) {
         try {
             let messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
             messages.unshift(messageData);
@@ -94,9 +116,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const unreadCount = messages.filter(msg => msg.status === 'unread').length;
             localStorage.setItem('unreadMessageCount', unreadCount.toString());
             
-            console.log('Message saved successfully');
+            console.log('Message saved to localStorage fallback');
+            return { success: true };
         } catch (error) {
-            console.error('Error saving message:', error);
+            console.error('Error saving to localStorage fallback:', error);
+            return { success: false, error: error.message };
         }
     }
     
